@@ -4,6 +4,7 @@ import 'package:toggle_switch/toggle_switch.dart';
 // Author Name: GABRIEL MACHADO VIOLANTE
 // Date: 23/09/2022
 // Turma: 303
+
 void main() {
   runApp(MaterialApp(
     home: Home(),
@@ -18,15 +19,48 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   String _userData = "";
+  int _coffeType = 0;
   String _infoText = "Insert your data";
   TextEditingController volumeController = TextEditingController();
 
   void _calculate() {
     setState(() {
       double volume = double.parse(volumeController.text);
-      String typeOfPerson = double.parse(heightController.text) / 100.0;
+      if (_coffeType == 0) {
+        double caffeine =
+      }
+      if (_coffeType == 1){
 
-      _infoText = "Foi";
+      }
+
+      switch(_userData) {
+        case "Healthy Adult": {
+
+
+        } break;
+
+        case "Children": {
+
+
+        } break;
+
+        case "Pregnant or Lactating": {
+
+
+        } break;
+
+        case "Caffeine Sensitive": {
+
+
+        } break;
+
+        default: {
+          _infoText = "This will never happend";
+        }
+        break;
+      }
+
+
     });
 
   }
@@ -59,6 +93,7 @@ class _HomeState extends State<Home> {
       body: SingleChildScrollView(
         padding: EdgeInsets.fromLTRB(10, 0, 10, 0),
         child: Form(
+          key: _formKey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -99,6 +134,16 @@ class _HomeState extends State<Home> {
                   style: const TextStyle(color: Colors.brown, fontSize: 20),
                   iconEnabledColor: Colors.brown,
                   value: _userData,
+
+                  validator: (value){
+                    if (value.toString().isEmpty) {
+                      return "Select something";
+                    }
+                    if (value.toString() == "") {
+                      return "Select something";
+                    }
+                  },
+
                   onChanged: (String? value) {
                     if (value is String) {
                       setState(() {
@@ -132,6 +177,10 @@ class _HomeState extends State<Home> {
                         return "You can't drink negative coffe";
                       }
 
+                      if (num.tryParse(value.toString()) == 0) {
+                        return "You didn't drink coffe";
+                      }
+
                       if (num.tryParse(value.toString()) == null) {
                         return "Insert a valid volume";
                       }
@@ -153,8 +202,15 @@ class _HomeState extends State<Home> {
                     labels: ['Espresso', 'Brewed'],
                     radiusStyle: true,
                     onToggle: (index) {
-                      print('switched to: $index');
+                      if(index == 0){
+                        _coffeType = 0;
+                      }
+                      if (index == 1){
+                        _coffeType = 1;
+                      }
                     },
+
+
                   ),
                 ),
               ),
