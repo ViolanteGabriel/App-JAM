@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
 
 // Author Name: GABRIEL MACHADO VIOLANTE
-// Date: 23/09/2022
+// Date: 07/10/2022
 // Turma: 303
 
 void main() {
@@ -18,46 +18,53 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  String _userData = "";
-  int _coffeType = 0;
-  String _infoText = "Insert your data";
-  TextEditingController volumeController = TextEditingController();
+  String _rendaMensa = "";
+  String _statusMae = "";
+  String _infoText = "Insira suas informações";
+  int _matriculado = 0;
+  int _vacinado = 0;
+  int _auxilio = 0;
+  int _filhos = 0;
+  TextEditingController quantidadeFilhos = TextEditingController();
 
   void _calculate() {
     setState(() {
-      double volume = double.parse(volumeController.text);
-      if (_coffeType == 0) {
-        double caffeine =
+      _filhos = int.parse(quantidadeFilhos.text);
+      _auxilio = 0;
+
+      if (quantidadeFilhos.text == "0" || _matriculado == 0 || _vacinado == 0 || _rendaMensa == "Acima de 2 salários mínimos") {
+        _infoText = "Não possui direito à auxílio";
+        return;
       }
-      if (_coffeType == 1){
-
+      else if (_statusMae == "Sim") {
+        _auxilio += 600;
       }
 
-      switch(_userData) {
-        case "Healthy Adult": {
+      _matriculado = 0;
+      _vacinado = 0;
 
-
-        } break;
-
-        case "Children": {
-
-
-        } break;
-
-        case "Pregnant or Lactating": {
-
-
-        } break;
-
-        case "Caffeine Sensitive": {
-
-
-        } break;
-
-        default: {
-          _infoText = "This will never happend";
+      if ( _rendaMensa == "Abaixo de 2 salários mínimos") {
+        if (_filhos >= 3) {
+          _auxilio += 3636;
+          _infoText = "Você possui direito a um auxílio de $_auxilio";
+          return;
         }
-        break;
+        else if (_filhos <= 2) {
+          _auxilio += 1818;
+          _infoText = "Você possui direito a um auxílio de $_auxilio";
+        }
+      }
+      else if ( _rendaMensa == "Abaixo de 1 salário mínimo") {
+        if (_filhos >= 3) {
+          _auxilio += 3636;
+          _infoText = "Você possui direito a um auxílio de $_auxilio";
+          return;
+        }
+        else if(_filhos <= 2) {
+          _auxilio += 3030;
+          _infoText = "Você possui direito a um auxílio de $_auxilio";
+          return;
+        }
       }
 
 
@@ -67,22 +74,31 @@ class _HomeState extends State<Home> {
 
   void _resetFields() {
     _formKey = GlobalKey<FormState>();
-    _userData = "";
-    volumeController.text = "";
+    _rendaMensa = "";
+    _statusMae = "";
+    quantidadeFilhos.text = "";
     setState(() {
-      _infoText = "Insert your Data";
+      _infoText = "Insira suas informações";
 
     });
   }
+
+  void _resetFieldsExceptResult() {
+    _formKey = GlobalKey<FormState>();
+    _rendaMensa = "";
+    _statusMae = "";
+    quantidadeFilhos.text = "";
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        title: Text('Caffeine Check'),
+        title: Text('Ysolutions - Calculadora de Auxílio'),
         centerTitle: true,
-        backgroundColor: Colors.brown,
+        backgroundColor: Colors.deepPurple,
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.refresh),
@@ -100,9 +116,9 @@ class _HomeState extends State<Home> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Icon(
-                  Icons.coffee_rounded,
+                  Icons.family_restroom_outlined,
                   size: 120.0,
-                  color: Colors.brown,
+                  color: Colors.deepPurple,
                 ),
               ),
               Padding(
@@ -110,79 +126,70 @@ class _HomeState extends State<Home> {
                 child: DropdownButtonFormField(
                   items: const [
                     DropdownMenuItem(
-                      child: Text("Select who you are"),
+                      child: Text("Selecione o montante da renda mensal familiar"),
                       value: "",
                     ),
                     DropdownMenuItem(
-                      child: Text("Healthy Adult"),
-                      value: "Healthy Adult",
+                      child: Text("Abaixo de 2 salários mínimos"),
+                      value: "Abaixo de 2 salários mínimos",
                     ),
                     DropdownMenuItem(
-                      child: Text("Children"),
-                      value: "Children",
+                      child: Text("Abaixo de 1 salário mínimo"),
+                      value: "Abaixo de 1 salário mínimo",
                     ),
                     DropdownMenuItem(
-                      child: Text("Pregnant or Lactating"),
-                      value: "Pregnant or Lactating",
-                    ),
-                    DropdownMenuItem(
-                      child: Text("Caffeine Sensitive"),
-                      value: "Caffeine Sensitive",
+                      child: Text("Acima de 2 salários mínimos"),
+                      value: "Acima de 2 salários mínimos",
                     ),
                   ],
                   isExpanded: true,
-                  style: const TextStyle(color: Colors.brown, fontSize: 20),
-                  iconEnabledColor: Colors.brown,
-                  value: _userData,
+                  style: const TextStyle(color: Colors.black, fontSize: 20),
+                  iconEnabledColor: Colors.deepPurple,
+                  value: _rendaMensa,
 
                   validator: (value){
                     if (value.toString().isEmpty) {
-                      return "Select something";
+                      return "Selecione alguma renda";
                     }
                     if (value.toString() == "") {
-                      return "Select something";
+                      return "Selecione alguma renda";
                     }
                   },
 
                   onChanged: (String? value) {
                     if (value is String) {
                       setState(() {
-                        _userData = value;
+                        _rendaMensa = value;
                       });
                     }
                   },
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: TextFormField(
                     keyboardType: TextInputType.number,
                     decoration: InputDecoration(
-                        labelText: 'Ammount of Coffe (ml)',
+                        labelText: 'Quantidade de filhos',
                         labelStyle:
-                            TextStyle(color: Colors.brown, fontSize: 20)),
+                            TextStyle(color: Colors.black, fontSize: 20)),
+
                     textAlign: TextAlign.center,
-                    style: TextStyle(color: Colors.brown, fontSize: 20.0),
-                    controller: volumeController,
+                    style: TextStyle(color: Colors.black, fontSize: 20.0),
+
+                    controller: quantidadeFilhos,
                     validator: (value) {
                       if (value.toString().isEmpty) {
-                        return "Insert a valid volume";
-                      }
-
-                      if (double.parse(value.toString()) > 4000) {
-                        return "You didn't drink that much coffe";
+                        return "Insira a quantidade.";
                       }
 
                       if (double.parse(value.toString()) < 0) {
-                        return "You can't drink negative coffe";
-                      }
-
-                      if (num.tryParse(value.toString()) == 0) {
-                        return "You didn't drink coffe";
+                        return "Número negativo";
                       }
 
                       if (num.tryParse(value.toString()) == null) {
-                        return "Insert a valid volume";
+                        return "Insira a quantidade";
                       }
                     }),
               ),
@@ -190,47 +197,115 @@ class _HomeState extends State<Home> {
                 padding: const EdgeInsets.all(8.0),
                 child: Center(
                   child: ToggleSwitch(
-                    minWidth: 100.0,
+                    minWidth: 130.0,
                     cornerRadius: 20.0,
                     activeBgColors: [
-                      [Colors.brown!],
-                      [Colors.brown!]
+                      [Colors.deepPurple!],
+                      [Colors.deepPurple!]
                     ],
-                    inactiveBgColor: Colors.grey,
+                    inactiveBgColor: Colors.black,
                     inactiveFgColor: Colors.white,
                     totalSwitches: 2,
-                    labels: ['Espresso', 'Brewed'],
+                    labels: ['Não matriculado', 'Matriculado'],
                     radiusStyle: true,
+
                     onToggle: (index) {
                       if(index == 0){
-                        _coffeType = 0;
+                        _matriculado = 0;
                       }
                       if (index == 1){
-                        _coffeType = 1;
+                        _matriculado = 1;
                       }
                     },
-
-
                   ),
                 ),
               ),
 
               Padding(
                 padding: const EdgeInsets.all(8.0),
+                child: Center(
+                  child: ToggleSwitch(
+                    minWidth: 130.0,
+                    cornerRadius: 20.0,
+                    activeBgColors: [
+                      [Colors.deepPurple!],
+                      [Colors.deepPurple!]
+                    ],
+                    inactiveBgColor: Colors.black,
+                    inactiveFgColor: Colors.white,
+                    totalSwitches: 2,
+                    labels: ['Não vacinado', 'Vacinado'],
+                    radiusStyle: true,
+                    onToggle: (index) {
+                      if(index == 0){
+                        _vacinado = 0;
+                      }
+                      if (index == 1){
+                        _vacinado = 1;
+                      }
+                    },
+                  ),
+                ),
+              ),
+
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: DropdownButtonFormField(
+                  items: const [
+                    DropdownMenuItem(
+                      child: Text("Você é uma mãe solteira?"),
+                      value: "",
+                    ),
+                    DropdownMenuItem(
+                      child: Text("Sim"),
+                      value: "Sim",
+                    ),
+                    DropdownMenuItem(
+                      child: Text("Não"),
+                      value: "Não",
+                    ),
+                  ],
+                  isExpanded: true,
+                  style: const TextStyle(color: Colors.black, fontSize: 20),
+                  iconEnabledColor: Colors.deepPurple,
+                  value: _statusMae,
+
+                  validator: (value){
+                    if (value.toString().isEmpty) {
+                      return "Seleciona alguma opção";
+                    }
+                    if (value.toString() == "") {
+                      return "Selecione alguma opção";
+                    }
+                  },
+
+                  onChanged: (String? value) {
+                    if (value is String) {
+                      setState(() {
+                        _statusMae = value;
+                      });
+                    }
+                  },
+                ),
+              )
+
+              ,Padding(
+                padding: const EdgeInsets.all(8.0),
                 child: Container(
                   height: 50.0,
                   child: ElevatedButton(
                     onPressed: () {
-                      if (_formKey.currentState!.validate()) _calculate();
+                      if (_formKey.currentState!.validate()) _calculate(); _resetFieldsExceptResult();
                     },
-                    child: Text('Check'),
+                    child: Text('Calcular'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.brown,
+                      backgroundColor: Colors.deepPurple,
                       foregroundColor: Colors.white,
                     ),
                   ),
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
